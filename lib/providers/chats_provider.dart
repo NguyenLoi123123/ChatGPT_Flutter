@@ -17,7 +17,7 @@ class ChatProvider with ChangeNotifier {
   Future<void> sendMessageAndGetAnswers(
       {required String msg, required String chosenModelId}) async {
     chatList.addAll(await ApiService.sendMessage(
-      message: msg,
+      message: 'What time is it?',
       modelId: chosenModelId,
     ));
     notifyListeners();

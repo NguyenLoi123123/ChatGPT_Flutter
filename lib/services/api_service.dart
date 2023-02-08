@@ -39,6 +39,7 @@ class ApiService {
       {required String message, required String modelId}) async {
     try {
       log("modelId $modelId");
+      print('message: $message');
       var response = await http.post(
         Uri.parse("$BASE_URL/completions"),
         headers: {
@@ -70,6 +71,7 @@ class ApiService {
             chatIndex: 1,
           ),
         );
+        print('chatList: $chatList');
       }
       return chatList;
     } catch (error) {
