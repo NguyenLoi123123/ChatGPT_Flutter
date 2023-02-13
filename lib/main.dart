@@ -1,10 +1,8 @@
-import 'package:chatgpt/providers/models_provider.dart';
+import 'package:chatgpt/data/constant.dart';
+import 'package:chatgpt/view/chat_view/chat_view.dart';
+import 'package:chatgpt/view/chat_view/controllers/chat_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'constants/constants.dart';
-import 'providers/chats_provider.dart';
-import 'screens/chat_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,10 +17,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ModelsProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ChatProvider(),
+          create: (_) => ChatViewController(),
         ),
       ],
       child: MaterialApp(
@@ -33,7 +28,7 @@ class MyApp extends StatelessWidget {
             appBarTheme: AppBarTheme(
               color: cardColor,
             )),
-        home: const ChatScreen(),
+        home: const ChatView(),
       ),
     );
   }
