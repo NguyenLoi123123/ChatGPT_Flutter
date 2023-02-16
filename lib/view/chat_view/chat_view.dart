@@ -4,9 +4,9 @@ import 'package:chatgpt/data/constant.dart';
 import 'package:chatgpt/model/chat_model.dart';
 import 'package:chatgpt/view/chat_view/controllers/chat_view_controller.dart';
 import 'package:chatgpt/view/resources/assets_manager.dart';
-import 'package:chatgpt/view/widget/popup_menu_button.dart';
-import 'package:chatgpt/view/widget/chat_row.dart';
-import 'package:chatgpt/view/widget/text_widget.dart';
+import 'package:chatgpt/view/resources/widget/chat_row.dart';
+import 'package:chatgpt/view/resources/widget/text_widget.dart';
+import 'package:chatgpt/view/setting_page/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -29,6 +29,10 @@ class _ChatViewState extends State<ChatView> {
     _listScrollController = ScrollController();
     textEditingController = TextEditingController();
     focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ChatViewController>(context, listen: false).initAudio();
+    });
     super.initState();
   }
 
@@ -37,6 +41,7 @@ class _ChatViewState extends State<ChatView> {
     _listScrollController.dispose();
     textEditingController.dispose();
     focusNode.dispose();
+
     super.dispose();
   }
 
@@ -51,7 +56,18 @@ class _ChatViewState extends State<ChatView> {
           child: Image.asset(AssetsManager.openaiLogo),
         ),
         title: const Text("ChatGPT"),
-        actions: const [ShowBottomSheetModel()],
+        actions: [
+          IconButton(
+              onPressed: (){
+                 Navigator.of(context).push(SettingPage()).whenComplete(() {
+                  controller.setting();
+                  });
+              },
+                 
+              icon: const Icon(
+                Icons.settings,
+              ))
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -64,6 +80,9 @@ class _ChatViewState extends State<ChatView> {
                     List<ChatModel> chatList = controller.chatList;
                     return ChatRow(
                       chatModel: chatList[index],
+                      onPressed: () {
+                        controller.speak(chatList[index].msg);
+                      },
                     );
                   }),
             ),
@@ -151,27 +170,5 @@ class _ChatViewState extends State<ChatView> {
       ),
       backgroundColor: Colors.red,
     ));
-  }
-
-  Future<void> showModalSheet({
-    required BuildContext context,
-  }) async {
-    await showModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-        ),
-        backgroundColor: scaffoldBackgroundColor,
-        context: context,
-        builder: (context) {
-          return Column(
-            children: const [
-              Text('Choose Model'),
-              SizedBox(height: 10),
-              ShowBottomSheetModel()
-            ],
-          );
-        });
   }
 }

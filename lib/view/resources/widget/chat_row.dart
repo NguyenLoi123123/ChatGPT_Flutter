@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'text_widget.dart';
 
 class ChatRow extends StatelessWidget {
-  const ChatRow({super.key, required this.chatModel});
+  const ChatRow({super.key, required this.chatModel, required this.onPressed});
 
   final ChatModel chatModel;
+
+  final VoidCallback onPressed;
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -32,24 +35,8 @@ class ChatRow extends StatelessWidget {
                 child: TextWidget(
               label: chatModel.msg,
             )),
-            chatModel.isUserChat
-                ? const SizedBox.shrink()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Icon(
-                        Icons.thumb_up_alt_outlined,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.thumb_down_alt_outlined,
-                        color: Colors.white,
-                      )
-                    ],
-                  ),
+            IconButton(
+                onPressed: onPressed, icon: const Icon(Icons.volume_down))
           ],
         ),
       ),
