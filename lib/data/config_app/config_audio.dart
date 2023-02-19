@@ -11,13 +11,18 @@ class ConfigAudio {
     defaultSetting();
   }
 
+  ///Âm lượng
   late double volumn;
+
+  ///Độ cao
   late double pitch;
+
+  ///Tốc độ
   late double rate;
 
   void defaultSetting() {
     volumn = 0.5;
-    pitch = 1;
+    pitch = 0.8;
     rate = 0.5;
   }
 }

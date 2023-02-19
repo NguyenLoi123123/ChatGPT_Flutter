@@ -8,6 +8,11 @@
 	<string>Chatgpt</string>
 	<key>NSMicrophoneUsageDescription</key>
     <string>This application needs to access your microphone</string>
+	<!-- Text to speech -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech Recognition is required</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone is required to record audio</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>This application needs the speech recognition permission</string>
 	<key>CFBundleExecutable</key>

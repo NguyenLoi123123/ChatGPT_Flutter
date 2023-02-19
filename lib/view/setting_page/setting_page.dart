@@ -1,4 +1,11 @@
+import 'package:chatgpt/model/language_voice_model.dart';
 import 'package:chatgpt/model/models_model.dart';
+import 'package:chatgpt/view/chat_view/controllers/chat_view_controller.dart';
+import 'package:chatgpt/view/login_view/login_view.dart';
+import 'package:chatgpt/view/setting_page/components/setting_button_logout.dart';
+import 'package:chatgpt/view/setting_page/components/setting_dropdown.dart';
+import 'package:chatgpt/view/setting_page/components/setting_slider.dart';
+import 'package:chatgpt/view/setting_page/components/setting_switch.dart';
 import 'package:chatgpt/view/setting_page/controller/setting_page_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,13 +44,29 @@ class SettingPage extends ModalRoute {
           itemBuilder: (_, index) {
             return list[index];
           }),
+      bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          child: bottom(context)),
     );
+  }
+
+  Widget bottom(BuildContext context) {
+    return SettingButton(
+        text: 'Đăng xuất',
+        color: Colors.red,
+        onPressed: () {
+          context.read<SettingPageController>().logout().whenComplete(() {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginView()),
+                (Route<dynamic> route) => false);
+          });
+        });
   }
 
   List<Widget> _listWidget(BuildContext context) {
     final controller = Provider.of<SettingPageController>(context);
     return [
-      dropdownItem<ModelsModel>(
+      SettingDropdown<ModelsModel>(
           label: 'Chọn model:',
           onChanged: (p0) {
             if (p0 != null) {
@@ -52,49 +75,59 @@ class SettingPage extends ModalRoute {
           },
           list: controller.listModelsModel,
           value: controller.currentModel,
-          child: (v) {
-            return Text(v.id);
-          }),
-      dropdownItem<String>(
-          label: 'Chọn ngôn ngữ audio:',
-          list: controller.listLanguageVoice,
-          value: controller.currentLanguageVoice,
-          onChanged: ((p0) {
-            if (p0 != null) {
-              controller.currentLanguageVoice = p0;
-            }
-          }),
-          child: (v) {
-            return Text(v);
-          }),
+          textDropdown: (v) => v.root),
+      SettingDropdown<LanguageVoiceModel>(
+        label: 'Chọn ngôn ngữ audio:',
+        list: controller.listLanguageVoice,
+        value: controller.currentLanguageVoice,
+        onChanged: ((p0) {
+          if (p0 != null) {
+            controller.currentLanguageVoice = p0;
+          }
+        }),
+        textDropdown: (model) => model.displayName,
+      ),
+      SettingSlider(
+          label: 'Độ cao:',
+          value: controller.pitch,
+          onchanged: (v) => controller.pitch = v),
+      SettingSlider(
+          label: 'Âm lượng:',
+          value: controller.volumn,
+          onchanged: (v) => controller.volumn = v),
+      SettingSlider(
+          label: 'Tốc độ:',
+          value: controller.rate,
+          onchanged: (v) => controller.rate = v),
+      SettingSwitch(
+          initValue: controller.autoChatReponse,
+          onChanged: (v) {
+            controller.autoChatReponse = v;
+          },
+          label: 'Tự động phản hồi âm thanh:'),
+      SettingButton(
+        text: 'Xóa đoạn chat',
+        onPressed: () {
+          context.read<ChatViewController>().clearChat();
+        },
+      )
     ];
   }
 
-  Widget dropdownItem<T>(
-      {required String label,
-      required List<T> list,
-      required T value,
-      required void Function(T?)? onChanged,
-      required Widget Function(T model) child}) {
-    return _rowItem(
-        text: label,
-        widget: DropdownButton<T>(
-          items: list.map<DropdownMenuItem<T>>((T value) {
-            return DropdownMenuItem<T>(
-              value: value,
-              child: child(value),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          elevation: 3,
-          icon: const Icon(Icons.arrow_drop_down),
-          value: value,
-        ));
-  }
-
-  Widget _rowItem({required String text, required Widget widget}) {
-    return Row(
-      children: [Expanded(child: Text(text)), const SizedBox(width: 8), widget],
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    // add fade animation
+    return FadeTransition(
+      opacity: animation,
+      // add slide animation
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, -1),
+          end: Offset.zero,
+        ).animate(animation),
+        child: child,
+      ),
     );
   }
 }

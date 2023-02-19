@@ -1,6 +1,5 @@
 import 'package:chatgpt/data/constant.dart';
 import 'package:chatgpt/view/chat_view/controllers/chat_view_controller.dart';
-import 'package:chatgpt/view/flash_view/controller/flash_view_controller.dart';
 import 'package:chatgpt/view/flash_view/flash_view.dart';
 import 'package:chatgpt/view/setting_page/controller/setting_page_controller.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +19,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => ChatViewController(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => FlashViewController(),
         ),
         ChangeNotifierProvider(
           create: (_) => SettingPageController(),

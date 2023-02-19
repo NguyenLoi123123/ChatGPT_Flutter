@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:chatgpt/data/constant.dart';
 import 'package:chatgpt/model/chat_model.dart';
+import 'package:chatgpt/view/chat_view/components/chat_view_loading.dart';
 import 'package:chatgpt/view/chat_view/controllers/chat_view_controller.dart';
 import 'package:chatgpt/view/resources/assets_manager.dart';
 import 'package:chatgpt/view/resources/widget/chat_row.dart';
-import 'package:chatgpt/view/resources/widget/text_widget.dart';
+import 'package:chatgpt/view/resources/widget/snack_bar_error.dart';
 import 'package:chatgpt/view/setting_page/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -31,8 +32,14 @@ class _ChatViewState extends State<ChatView> {
     focusNode = FocusNode();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ChatViewController>(context, listen: false).initAudio();
+      context.read<ChatViewController>().initAudio();
     });
+
+    Future.delayed(const Duration(seconds: 5), () {
+      _listScrollController
+          .jumpTo(_listScrollController.position.maxScrollExtent);
+    });
+
     super.initState();
   }
 
@@ -45,48 +52,38 @@ class _ChatViewState extends State<ChatView> {
     super.dispose();
   }
 
+  AppBar appBar() {
+    return AppBar(
+      elevation: 2,
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.asset(AssetsManager.openaiLogo),
+      ),
+      title: const Text("ChatGPT"),
+      actions: [
+        IconButton(
+            onPressed: () async {
+              Navigator.of(context).push(SettingPage()).whenComplete(() async {
+                context.read<ChatViewController>().setting();
+              });
+            },
+            icon: const Icon(
+              Icons.settings,
+            ))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<ChatViewController>(context);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(AssetsManager.openaiLogo),
-        ),
-        title: const Text("ChatGPT"),
-        actions: [
-          IconButton(
-              onPressed: (){
-                 Navigator.of(context).push(SettingPage()).whenComplete(() {
-                  controller.setting();
-                  });
-              },
-                 
-              icon: const Icon(
-                Icons.settings,
-              ))
-        ],
-      ),
+      appBar: appBar(),
       body: SafeArea(
-        child: Column(
+        child: ChatViewLoading(
+            child: Column(
           children: [
-            Flexible(
-              child: ListView.builder(
-                  controller: _listScrollController,
-                  itemCount: controller.chatList.length, //chatList.length,
-                  itemBuilder: (context, index) {
-                    List<ChatModel> chatList = controller.chatList;
-                    return ChatRow(
-                      chatModel: chatList[index],
-                      onPressed: () {
-                        controller.speak(chatList[index].msg);
-                      },
-                    );
-                  }),
-            ),
-            if (controller.isTyping) ...[
+            listChat(),
+            if (context.read<ChatViewController>().isTyping) ...[
               const SpinKitThreeBounce(
                 color: Colors.white,
                 size: 18,
@@ -104,7 +101,7 @@ class _ChatViewState extends State<ChatView> {
                         style: const TextStyle(color: Colors.white),
                         controller: textEditingController,
                         onSubmitted: (value) async {
-                          await sendMessageFCT(controller: controller);
+                          await sendMessageFCT();
                         },
                         decoration: const InputDecoration.collapsed(
                             hintText: "How can I help you",
@@ -113,7 +110,7 @@ class _ChatViewState extends State<ChatView> {
                     ),
                     IconButton(
                         onPressed: () async {
-                          await sendMessageFCT(controller: controller);
+                          await sendMessageFCT();
                         },
                         icon: const Icon(
                           Icons.send,
@@ -124,21 +121,41 @@ class _ChatViewState extends State<ChatView> {
               ),
             ),
           ],
-        ),
+        )),
       ),
+    );
+  }
+
+  Widget listChat() {
+    List<ChatModel> list = context.watch<ChatViewController>().chatList;
+    return Flexible(
+      child: ListView.builder(
+          addAutomaticKeepAlives: true,
+          controller: _listScrollController,
+          itemCount: list.length, //chatList.length,
+          itemBuilder: (context, index) {
+            List<ChatModel> chatList = list;
+            return ChatRow(
+              chatModel: chatList[index],
+              onPressed: () {
+                context.read<ChatViewController>().speak(chatList[index].msg);
+              },
+            );
+          }),
     );
   }
 
   void scrollListToEND() {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _listScrollController
-          .jumpTo(_listScrollController.position.maxScrollExtent);
+      if (_listScrollController.hasClients) {
+        _listScrollController
+            .jumpTo(_listScrollController.position.maxScrollExtent);
+      }
     });
   }
 
-  Future<void> sendMessageFCT({
-    required ChatViewController controller,
-  }) async {
+  Future<void> sendMessageFCT() async {
+    final controller = context.read<ChatViewController>();
     if (textEditingController.text.isEmpty) {
       showSnackBarError('Please type a message');
       return;
@@ -151,8 +168,7 @@ class _ChatViewState extends State<ChatView> {
       controller.addMessage(msg: currentQuestion);
 
       await controller
-          .sendMessageAndGetAnswers(
-              msg: currentQuestion, chosenModelId: controller.currentModel.id)
+          .sendMessageAndGetAnswers(msg: currentQuestion)
           .whenComplete(() {
         scrollListToEND();
         controller.isTyping = false;
@@ -164,11 +180,7 @@ class _ChatViewState extends State<ChatView> {
   }
 
   void showSnackBarError(String textError) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: TextWidget(
-        label: textError.toString(),
-      ),
-      backgroundColor: Colors.red,
-    ));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBarError(content: textError));
   }
 }

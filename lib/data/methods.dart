@@ -43,11 +43,6 @@ class Methods {
         defaultValue: defaultValue);
   }
 
-  static dynamic getMap(Map data, String fieldName, {dynamic defaultValue}) {
-    return data.findData(fieldName, (value) => value,
-        defaultValue: defaultValue);
-  }
-
   static int getInt(Map data, String fieldName, {int defaultValue = 0}) {
     return data.find(fieldName, (value) => double.parse(value).toInt(),
         defaultValue: defaultValue);
@@ -80,6 +75,14 @@ class Methods {
   static int convertToInt(Map data, String fieldName) {
     return data.find(
         fieldName, (value) => value.replaceAll(RegExp(r'[^0-9]'), ''));
+  }
+
+  static Map<String, Object?> getMap(
+    Map data,
+    String fieldName,
+  ) {
+    return data.findData(fieldName, (value) => value,
+        defaultValue: Map<String, Object?>.from({}));
   }
 
   static List<Map<String, Object?>> getList(Map data, String fieldName) {
@@ -123,7 +126,7 @@ class Methods {
 
     return phoneNumber;
   }
-  
+
   static List<int> getListInt(Map? data, String key) {
     List<int> lst = [];
     if (data == null) return lst;
@@ -154,7 +157,7 @@ class Methods {
     }
   }
 
-   static int toInt(String? s, {bool isFloor = true, int defaultValue = 0}) {
+  static int toInt(String? s, {bool isFloor = true, int defaultValue = 0}) {
     if (s == null) return defaultValue;
     try {
       if (s == '' || s == 'null') {
@@ -172,7 +175,7 @@ class Methods {
     }
   }
 
-   static double toDouble(String? s, {double defaultValue = 0}) {
+  static double toDouble(String? s, {double defaultValue = 0}) {
     if (s == null) return defaultValue;
     try {
       if (s == '' || s == 'null') {
@@ -184,5 +187,4 @@ class Methods {
       return defaultValue;
     }
   }
-  
 }
