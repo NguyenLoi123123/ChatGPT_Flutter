@@ -68,7 +68,7 @@ class ApiServiceIpml extends ApiService {
         {
           "model": _dataSetting.currentModel.id,
           "prompt": message,
-          "max_tokens": 150,
+          "max_tokens": 300,
         },
       ),
     );
@@ -97,7 +97,7 @@ class ApiServiceIpml extends ApiService {
 
   @override
   Future<bool> checkApiKeyValid(String key) async {
-    Map json = await _reponseChat(newKey: key, message: 'Test');
+    Map json = await _reponseChat(newKey: key, message: 'Hello');
     bool isValid = Methods.getMap(json, 'error').isEmpty;
     log(isValid ? 'ApiKey hợp lệ' : 'ApiKey không hợp lệ');
     return isValid;

@@ -1,7 +1,9 @@
-import 'package:chatgpt/model/language_voice_model.dart';
+import 'package:chatgpt/data/constant.dart';
+import 'package:chatgpt/model/language_listen_model.dart';
+import 'package:chatgpt/model/language_speak_model.dart';
 import 'package:chatgpt/model/models_model.dart';
-import 'package:chatgpt/view/chat_view/controllers/chat_view_controller.dart';
 import 'package:chatgpt/view/login_view/login_view.dart';
+import 'package:chatgpt/view/setting_page/components/bottom_sheet_setting.dart';
 import 'package:chatgpt/view/setting_page/components/setting_button_logout.dart';
 import 'package:chatgpt/view/setting_page/components/setting_dropdown.dart';
 import 'package:chatgpt/view/setting_page/components/setting_slider.dart';
@@ -76,16 +78,27 @@ class SettingPage extends ModalRoute {
           list: controller.listModelsModel,
           value: controller.currentModel,
           textDropdown: (v) => v.root),
-      SettingDropdown<LanguageVoiceModel>(
-        label: 'Chọn ngôn ngữ audio:',
-        list: controller.listLanguageVoice,
-        value: controller.currentLanguageVoice,
+      SettingDropdown<LanguageListenModel>(
+        label: 'Chọn ngôn ngữ nghe:',
+        list: controller.listLanguageListen,
+        value: controller.currentLanguageListen,
         onChanged: ((p0) {
           if (p0 != null) {
-            controller.currentLanguageVoice = p0;
+            controller.currentLanguageListen = p0;
           }
         }),
         textDropdown: (model) => model.displayName,
+      ),
+      SettingDropdown<LanguageSpeakModel>(
+        label: 'Chọn ngôn ngữ nói:',
+        list: controller.listLanguageSpeak,
+        value: controller.currentLanguageSpeak,
+        onChanged: ((p0) {
+          if (p0 != null) {
+            controller.currentLanguageSpeak = p0;
+          }
+        }),
+        textDropdown: (model) => model.name,
       ),
       SettingSlider(
           label: 'Độ cao:',
@@ -105,13 +118,31 @@ class SettingPage extends ModalRoute {
             controller.autoChatReponse = v;
           },
           label: 'Tự động phản hồi âm thanh:'),
-      SettingButton(
-        text: 'Xóa đoạn chat',
-        onPressed: () {
-          context.read<ChatViewController>().clearChat();
-        },
-      )
+      support(context)
     ];
+  }
+
+  Widget support(BuildContext context) {
+    return SettingButton(
+        onPressed: () {
+          showBottom(context);
+        },
+        text: 'Ủng hộ');
+  }
+
+
+
+  void showBottom(BuildContext context) {
+
+    showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: scaffoldBackgroundColor,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+        builder: (context) {
+          return const BottomSheetSetting();
+        });
   }
 
   @override
@@ -123,7 +154,7 @@ class SettingPage extends ModalRoute {
       // add slide animation
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, -1),
+          begin: const Offset(1, 0),
           end: Offset.zero,
         ).animate(animation),
         child: child,

@@ -27,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _submit() async {
+     FocusScope.of(context).unfocus();
     if (_key.currentState!.validate()) {
       _key.currentState!.save();
       updateStatus(true);
@@ -56,12 +57,12 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Padding(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: Padding(
           padding: const EdgeInsets.all(16),
           child: _form(),
         ),
@@ -95,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
               children: const [
                 CircularProgressIndicator(),
                 SizedBox(height: 8),
-                Text('Đang tải')
+                Text('Đang kiếm tra')
               ],
             )
           : const Text('Xác nhận'),
@@ -105,6 +106,8 @@ class _LoginViewState extends State<LoginView> {
   Widget textFormField() {
     return TextFormField(
       style: const TextStyle(color: Colors.white),
+      readOnly: _isLoading,
+      onEditingComplete: _submit,
       decoration: InputDecoration(
           enabledBorder: _inputBorder(),
           hintText: 'Nhập ApiKey của bạn',
