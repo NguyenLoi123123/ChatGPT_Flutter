@@ -7,7 +7,6 @@ import 'package:chatgpt/data/prefs/data_local.dart';
 import 'package:chatgpt/model/chat_model.dart';
 import 'package:chatgpt/model/models_model.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 class ChatViewController
     with ChangeNotifier, ChatViewControllerInput, ChatViewControllerOutput {
@@ -73,23 +72,18 @@ class ChatViewController
   @override
   List<ModelsModel> get modelsList => _setting.listModelsModel;
 
-  ///Handle Audio
-  final FlutterTts _flutterTts = FlutterTts();
-
-  @override
-  void dispose() {
-    super.dispose();
-    _flutterTts.stop();
-  }
-
   @override
   Future<void> clearChat() async {
     _localPrefs.clearDataChat();
     _chatList.clear();
     if (_configAudio.statusAudio != StatusAudio.stopped) {
-      await _configAudio.stop();
+      stop();
     }
     notifyListeners();
+  }
+
+  void stop() async {
+    await _configAudio.stop();
   }
 }
 

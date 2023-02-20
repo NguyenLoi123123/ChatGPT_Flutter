@@ -68,7 +68,7 @@ class ApiServiceIpml extends ApiService {
         {
           "model": _dataSetting.currentModel.id,
           "prompt": message,
-          "max_tokens": 300,
+          "max_tokens": newKey == null ? 600 : 5,
         },
       ),
     );

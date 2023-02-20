@@ -149,6 +149,7 @@ class _ChatViewState extends State<ChatView> {
                     onPressed: value
                         ? null
                         : () {
+                            context.read<ChatViewController>().stop();
                             showMicBottomSheet();
                           },
                     tooltip: 'Mic',
@@ -225,8 +226,9 @@ class _ChatViewState extends State<ChatView> {
 
   void showMicBottomSheet() {
     focusNode.unfocus();
-    scaffoldKey.currentState!.showBottomSheet(
-      (_) => const BottomSheetVoice(),
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => const BottomSheetVoice(),
       backgroundColor: scaffoldBackgroundColor,
       elevation: 3,
       shape: const RoundedRectangleBorder(
