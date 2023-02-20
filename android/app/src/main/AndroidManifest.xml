@@ -12,7 +12,7 @@
         <package android:name="com.google.android.googlequicksearchbox"/>
     </queries>
    <application
-        android:label="chatgpt"
+        android:label="ChatGPT"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

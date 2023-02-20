@@ -48,7 +48,7 @@ class BottomSheetSetting extends StatelessWidget {
               fontSize: 18),
           const SizedBox(height: 40),
           CircleAvatar(
-            radius: 40,
+            radius: 80,
             child: Image.asset(AssetsManager.support),
           ),
           const SizedBox(height: 50),

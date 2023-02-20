@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Chatgpt</string>
+	<string>ChatGPT</string>
 	<key>NSMicrophoneUsageDescription</key>
     <string>This application needs to access your microphone</string>
 	<!-- Text to speech -->
