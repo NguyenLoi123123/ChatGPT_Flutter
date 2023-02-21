@@ -8,14 +8,8 @@
 - Using APIKey to login
 
 
-![v3](https://user-images.githubusercontent.com/86301553/220090956-ab876a98-c7ec-4cf8-8985-442dbd67b5af.jpg)
-
-- You can update setting for chat here
+![A1](https://user-images.githubusercontent.com/86301553/220230588-2d84ce29-4cd6-4353-aa0b-16fb05994ba4.png)
 
 
-![v2](https://user-images.githubusercontent.com/86301553/220091054-a02b74b5-a011-46dd-a600-998e54123ef3.jpg)
 
-- Result: You can chat With ChatGPT
-
-
-![22](https://user-images.githubusercontent.com/86301553/220092078-ddbfd480-a696-4023-81d2-6b95d7d4fa69.jpg)
+![A2](https://user-images.githubusercontent.com/86301553/220230864-81e3490a-5327-4f8d-bf3c-ac6e6ebeae0b.png)
